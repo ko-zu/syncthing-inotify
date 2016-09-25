@@ -18,7 +18,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"regexp"
 	"runtime"
 	"sort"
 	"strconv"
@@ -43,12 +42,6 @@ type FolderConfiguration struct {
 	Label           string
 	Path            string
 	RescanIntervalS int
-}
-
-// Pattern holds ignored path and a boolean which value is false when we should use the pattern in exclude mode
-type Pattern struct {
-	match   *regexp.Regexp
-	include bool
 }
 
 // Event holds full event data coming from Syncthing REST API
@@ -123,18 +116,20 @@ var (
 
 // Main
 var (
-	stop         = make(chan int)
-	ignorePaths  = []string{".stversions", ".syncthing.", "~syncthing~"}
-	logFd        = os.Stdout
-	Version      = "unknown-dev"
-	Discard      = log.New(ioutil.Discard, "", log.Ldate)
-	Warning      = Discard // verbosity=1
-	OK           = Discard // 2
-	Trace        = Discard // 3
-	Debug        = Discard // 4
-	watchFolders folderSlice
-	skipFolders  folderSlice
-	delayScan    = 3600
+	stop              = make(chan int)
+	versionFolder    = ".stversions"
+	tempFilePrefixes  = []string{".syncthing.", "~syncthing~"}
+	tempFileSuffix    = ".tmp"
+	logFd             = os.Stdout
+	Version           = "unknown-dev"
+	Discard           = log.New(ioutil.Discard, "", log.Ldate)
+	Warning           = Discard // verbosity=1
+	OK                = Discard // 2
+	Trace             = Discard // 3
+	Debug             = Discard // 4
+	watchFolders      folderSlice
+	skipFolders       folderSlice
+	delayScan         = 3600
 )
 
 const (
@@ -397,16 +392,12 @@ func watchFolder(folder FolderConfiguration, stInput chan STEvent) {
 		informError("Failed to install inotify handler for " + folder.Label + ": " + err.Error())
 		return
 	}
-	ignores := ignore.New(false)
 	Trace.Println("Getting ignore patterns for " + folder.Label)
-	ignores.Load(filepath.Join(folderPath, ".stignore"))
+	ignoreTest := createIgnoreTest(folderPath)
 	fsInput := make(chan string)
 	c := make(chan notify.EventInfo, maxFiles)
-	ignoreTest := func(absolutePath string) bool {
-		relPath := relativePath(absolutePath, folderPath)
-		return ignores.Match(relPath).IsIgnored()
-	}
-	notify.SetDoNotWatch(ignoreTest)
+	notify.SetDoNotWatch(func(absPath string) bool {
+		return ignoreTest(relativePath(absPath, folderPath))})
 	if err := notify.Watch(filepath.Join(folderPath, "..."), c, notify.All); err != nil {
 		if strings.Contains(err.Error(), "too many open files") || strings.Contains(err.Error(), "no space left on device") {
 			msg := "Failed to install inotify handler for " + folder.Label + ". Please increase inotify limits, see http://bit.ly/1PxkdUC for more information."
@@ -430,7 +421,7 @@ func watchFolder(folder FolderConfiguration, stInput chan STEvent) {
 		evAbsolutePath := waitForEvent(c)
 		Debug.Println("Change detected in: " + evAbsolutePath + " (could still be ignored)")
 		evRelPath := relativePath(evAbsolutePath, folderPath)
-		if ignores.Match(evRelPath).IsIgnored() {
+		if ignoreTest(evRelPath) {
 			Debug.Println("Ignoring", evAbsolutePath)
 			continue
 		}
@@ -457,6 +448,24 @@ func relativePath(path string, folderPath string) string {
 		path = path[1:len(path)]
 	}
 	return path
+}
+
+// Returns a function to test whether a file should be ignored
+// Ignorefile must contain the absolute path to ".stignore". The returned
+// function takes the path of the file to be tested relative to its folders root
+func createIgnoreTest(folderPath string) func(relPath string) bool {
+	ignores := ignore.New(false)
+	ignores.Load(filepath.Join(folderPath, ".stignore"))
+	return func(relPath string) bool {
+		if strings.SplitN(relPath, pathSeparator, 2)[0] == versionFolder {
+			return true }
+		for _, ignorePrefix := range tempFilePrefixes {
+			if strings.HasPrefix(filepath.Base(relPath), ignorePrefix) &&
+				strings.HasSuffix(relPath, tempFileSuffix) {
+				return true
+			}
+		}
+		return ignores.Match(relPath).IsIgnored()}
 }
 
 // waitForEvent waits for an event in a channel c and returns event.Path().

@@ -1,7 +1,7 @@
 [Unit]
 Description=Syncthing Inotify File Watcher
 Documentation=https://github.com/syncthing/syncthing-inotify/blob/master/README.md
-After=network.target syncthing.service
+After=syncthing.service
 Requires=syncthing.service
 
 [Service]

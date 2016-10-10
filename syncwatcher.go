@@ -393,7 +393,7 @@ func watchFolder(folder FolderConfiguration, stInput chan STEvent) {
 		return
 	}
 	Trace.Println("Getting ignore patterns for " + folder.Label)
-	ignoreTest := createIgnoreTest(folderPath)
+	ignoreTest := createIgnoreFilter(folderPath)
 	fsInput := make(chan string)
 	c := make(chan notify.EventInfo, maxFiles)
 	notify.SetDoNotWatch(func(absPath string) bool {
@@ -450,10 +450,11 @@ func relativePath(path string, folderPath string) string {
 	return path
 }
 
-// Returns a function to test whether a file should be ignored
-// Ignorefile must contain the absolute path to ".stignore". The returned
-// function takes the path of the file to be tested relative to its folders root
-func createIgnoreTest(folderPath string) func(relPath string) bool {
+// Returns a function to test whether a path should be ignored.
+// The directory given by the absolute path "folderPath" must contain the
+// ".stignore" file. The returned function expects the path of the file to be
+// tested relative to its folders root.
+func createIgnoreFilter(folderPath string) func(relPath string) bool {
 	ignores := ignore.New(false)
 	ignores.Load(filepath.Join(folderPath, ".stignore"))
 	return func(relPath string) bool {

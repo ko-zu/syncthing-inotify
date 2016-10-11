@@ -26,8 +26,8 @@ import (
 	"time"
 
 	"github.com/cenkalti/backoff"
-	"github.com/zillode/notify"
 	"github.com/syncthing/syncthing/lib/ignore"
+	"github.com/zillode/notify"
 )
 
 // Configuration is used in parsing response from ST
@@ -116,20 +116,20 @@ var (
 
 // Main
 var (
-	stop              = make(chan int)
+	stop             = make(chan int)
 	versionFolder    = ".stversions"
-	tempFilePrefixes  = []string{".syncthing.", "~syncthing~"}
-	tempFileSuffix    = ".tmp"
-	logFd             = os.Stdout
-	Version           = "unknown-dev"
-	Discard           = log.New(ioutil.Discard, "", log.Ldate)
-	Warning           = Discard // verbosity=1
-	OK                = Discard // 2
-	Trace             = Discard // 3
-	Debug             = Discard // 4
-	watchFolders      folderSlice
-	skipFolders       folderSlice
-	delayScan         = 3600
+	tempFilePrefixes = []string{".syncthing.", "~syncthing~"}
+	tempFileSuffix   = ".tmp"
+	logFd            = os.Stdout
+	Version          = "unknown-dev"
+	Discard          = log.New(ioutil.Discard, "", log.Ldate)
+	Warning          = Discard // verbosity=1
+	OK               = Discard // 2
+	Trace            = Discard // 3
+	Debug            = Discard // 4
+	watchFolders     folderSlice
+	skipFolders      folderSlice
+	delayScan        = 3600
 )
 
 const (
@@ -374,13 +374,13 @@ func getFolders() []FolderConfiguration {
 		log.Fatalln(err)
 	}
 	// Use folder label unless it's empty
-	folders := cfg.Folders;
+	folders := cfg.Folders
 	for f := range folders {
 		if len(folders[f].Label) == 0 {
-			folders[f].Label = folders[f].ID;
+			folders[f].Label = folders[f].ID
 		}
 	}
-	return folders;
+	return folders
 }
 
 // watchFolder installs inotify watcher for a folder, launches
@@ -395,10 +395,11 @@ func watchFolder(folder FolderConfiguration, stInput chan STEvent) {
 	Trace.Println("Getting ignore patterns for " + folder.Label)
 	ignoreFilter := createIgnoreFilter(folderPath)
 	absIgnoreFilter := func(absPath string) bool {
-		return ignoreFilter(relativePath(absPath, folderPath))}
+		return ignoreFilter(relativePath(absPath, folderPath))
+	}
 	fsInput := make(chan string)
 	c := make(chan notify.EventInfo, maxFiles)
-	if err := notify.WatchWithIgnoring(filepath.Join(folderPath, "..."), c,
+	if err := notify.WatchWithFilter(filepath.Join(folderPath, "..."), c,
 		absIgnoreFilter, notify.All); err != nil {
 		if strings.Contains(err.Error(), "too many open files") || strings.Contains(err.Error(), "no space left on device") {
 			msg := "Failed to install inotify handler for " + folder.Label + ". Please increase inotify limits, see http://bit.ly/1PxkdUC for more information."
@@ -440,7 +441,7 @@ func realPath(path string) (string, error) {
 }
 
 func relativePath(path string, folderPath string) string {
-	path = expandTilde(path);
+	path = expandTilde(path)
 	path = strings.TrimPrefix(path, folderPath)
 	if len(path) == 0 {
 		return path
@@ -460,14 +461,16 @@ func createIgnoreFilter(folderPath string) func(relPath string) bool {
 	ignores.Load(filepath.Join(folderPath, ".stignore"))
 	return func(relPath string) bool {
 		if strings.SplitN(relPath, pathSeparator, 2)[0] == versionFolder {
-			return true }
+			return true
+		}
 		for _, ignorePrefix := range tempFilePrefixes {
 			if strings.HasPrefix(filepath.Base(relPath), ignorePrefix) &&
 				strings.HasSuffix(relPath, tempFileSuffix) {
 				return true
 			}
 		}
-		return ignores.Match(relPath).IsIgnored()}
+		return ignores.Match(relPath).IsIgnored()
+	}
 }
 
 // waitForEvent waits for an event in a channel c and returns event.Path().

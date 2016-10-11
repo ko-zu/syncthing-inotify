@@ -394,11 +394,12 @@ func watchFolder(folder FolderConfiguration, stInput chan STEvent) {
 	}
 	Trace.Println("Getting ignore patterns for " + folder.Label)
 	ignoreTest := createIgnoreTest(folderPath)
+	absIgnoreTest := func(absPath string) bool {
+		return ignoreTest(relativePath(absPath, folderPath))}
 	fsInput := make(chan string)
 	c := make(chan notify.EventInfo, maxFiles)
-	notify.SetDoNotWatch(func(absPath string) bool {
-		return ignoreTest(relativePath(absPath, folderPath))})
-	if err := notify.Watch(filepath.Join(folderPath, "..."), c, notify.All); err != nil {
+	if err := notify.WatchWithIgnoring(filepath.Join(folderPath, "..."), c,
+		absIgnoreTest, notify.All); err != nil {
 		if strings.Contains(err.Error(), "too many open files") || strings.Contains(err.Error(), "no space left on device") {
 			msg := "Failed to install inotify handler for " + folder.Label + ". Please increase inotify limits, see http://bit.ly/1PxkdUC for more information."
 			Warning.Println(msg, err)

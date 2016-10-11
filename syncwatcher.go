@@ -393,13 +393,13 @@ func watchFolder(folder FolderConfiguration, stInput chan STEvent) {
 		return
 	}
 	Trace.Println("Getting ignore patterns for " + folder.Label)
-	ignoreTest := createIgnoreTest(folderPath)
-	absIgnoreTest := func(absPath string) bool {
-		return ignoreTest(relativePath(absPath, folderPath))}
+	ignoreFilter := createIgnoreFilter(folderPath)
+	absIgnoreFilter := func(absPath string) bool {
+		return ignoreFilter(relativePath(absPath, folderPath))}
 	fsInput := make(chan string)
 	c := make(chan notify.EventInfo, maxFiles)
 	if err := notify.WatchWithIgnoring(filepath.Join(folderPath, "..."), c,
-		absIgnoreTest, notify.All); err != nil {
+		absIgnoreFilter, notify.All); err != nil {
 		if strings.Contains(err.Error(), "too many open files") || strings.Contains(err.Error(), "no space left on device") {
 			msg := "Failed to install inotify handler for " + folder.Label + ". Please increase inotify limits, see http://bit.ly/1PxkdUC for more information."
 			Warning.Println(msg, err)
@@ -422,7 +422,7 @@ func watchFolder(folder FolderConfiguration, stInput chan STEvent) {
 		evAbsolutePath := waitForEvent(c)
 		Debug.Println("Change detected in: " + evAbsolutePath + " (could still be ignored)")
 		evRelPath := relativePath(evAbsolutePath, folderPath)
-		if ignoreTest(evRelPath) {
+		if ignoreFilter(evRelPath) {
 			Debug.Println("Ignoring", evAbsolutePath)
 			continue
 		}
@@ -451,10 +451,11 @@ func relativePath(path string, folderPath string) string {
 	return path
 }
 
-// Returns a function to test whether a file should be ignored
-// Ignorefile must contain the absolute path to ".stignore". The returned
-// function takes the path of the file to be tested relative to its folders root
-func createIgnoreTest(folderPath string) func(relPath string) bool {
+// Returns a function to test whether a path should be ignored.
+// The directory given by the absolute path "folderPath" must contain the
+// ".stignore" file. The returned function expects the path of the file to be
+// tested relative to its folders root.
+func createIgnoreFilter(folderPath string) func(relPath string) bool {
 	ignores := ignore.New(false)
 	ignores.Load(filepath.Join(folderPath, ".stignore"))
 	return func(relPath string) bool {

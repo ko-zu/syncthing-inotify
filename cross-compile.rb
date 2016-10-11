@@ -15,7 +15,7 @@ version = `git describe --abbrev=0 --tags`.chomp
 diff = `git diff`.chomp
 
 unless diff.empty?
-  puts "Forgot to git reset --hard?"
+  puts "Forgot to git reset --hard? (Y/n)"
   exit if gets.chomp != "n"
 end
 
@@ -39,9 +39,14 @@ end
         vars += " GOARM=5"
       end
       ldflags = "-w -X main.Version=#{version}"
-      build = "#{vars} go build -ldflags '#{ldflags}'"
+      if os.include?("darwin")
+        build = "xgo --targets=darwin/amd64 -ldflags '#{ldflags}' ."
+        build += " && mv syncthing-inotify-darwin-10.6-amd64 #{name}"
+      else
+        build = "#{vars} go build -ldflags '#{ldflags}'"
+      end
       package = "tar -czf syncthing-inotify-#{os}-#{arch}-#{version}.tar.gz #{name}"
-      remove = "rm #{name}"
+      remove = "rm -f #{name}"
       output = `#{build} 2>&1 && #{package} && #{remove}`
       puts output unless output.empty?
       if output.include?("must be bootstrapped") || output.include?("no such tool")

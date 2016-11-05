@@ -46,6 +46,9 @@ end
         build = "#{vars} go build -ldflags '#{ldflags}'"
       end
       package = "tar -czf syncthing-inotify-#{os}-#{arch}-#{version}.tar.gz #{name}"
+      if os.include?("windows")
+        package = "zip syncthing-inotify-#{os}-#{arch}-#{version}.zip #{name}"
+      end
       remove = "rm -f #{name}"
       output = `#{build} 2>&1 && #{package} && #{remove}`
       puts output unless output.empty?

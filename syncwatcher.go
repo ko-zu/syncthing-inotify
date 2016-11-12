@@ -5,7 +5,9 @@ import (
 	"bufio"
 	"bytes"
 	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
+	"encoding/pem"
 	"encoding/xml"
 	"errors"
 	"flag"
@@ -66,6 +68,7 @@ type STNestedConfig struct {
 // STConfig is used for unpacking gui part of config from XML format
 type STConfig struct {
 	CsrfFile string
+	CertFile string
 	APIKey   string `xml:"apikey"`
 	Target   string `xml:"address"`
 	AuthUser string `xml:"user"`
@@ -93,6 +96,8 @@ func (fs *folderSlice) Set(value string) error {
 // HTTP Authentication
 var (
 	target    string
+	cert      *x509.Certificate
+	certFile  string
 	authUser  string
 	authPass  string
 	csrfToken string
@@ -154,6 +159,7 @@ func init() {
 	if !strings.Contains(c.Target, "://") {
 		if c.TLS {
 			target = "https://" + c.Target
+			certFile = c.CertFile
 		} else {
 			target = "http://" + c.Target
 		}
@@ -173,6 +179,7 @@ func init() {
 	flag.IntVar(&logflags, "logflags", 2, "Select information in log line prefix")
 	flag.StringVar(&home, "home", home, "Specify the home Syncthing dir to sniff configuration settings")
 	flag.StringVar(&target, "target", target, "Target url (prepend with https:// for TLS)")
+	flag.StringVar(&certFile, "cert", certFile, "Server certificate file")
 	flag.StringVar(&authUser, "user", c.AuthUser, "Username")
 	flag.StringVar(&authPass, "password", "***", "Password")
 	flag.StringVar(&csrfFile, "csrf", "", "CSRF token file")
@@ -221,8 +228,10 @@ func init() {
 		if !strings.Contains(c.Target, "://") {
 			if c.TLS {
 				target = "https://" + c.Target
+				certFile = c.CertFile
 			} else {
 				target = "http://" + c.Target
+				certFile = ""
 			}
 			target = strings.Replace(target, "0.0.0.0", "127.0.0.1", 1)
 			apiKey = c.APIKey
@@ -230,6 +239,38 @@ func init() {
 	}
 	if !strings.Contains(target, "://") {
 		target = "http://" + target
+	}
+	if len(certFile) > 0 {
+		pemCerts, err := ioutil.ReadFile(certFile)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		for {
+			var block *pem.Block
+			block, pemCerts = pem.Decode(pemCerts)
+			if block == nil {
+				break
+			}
+			if block.Type != "CERTIFICATE" {
+				continue
+			}
+			if cert != nil {
+				log.Fatalln("More than one certificate in server certificate file")
+			}
+			if len(block.Headers) > 0 {
+				log.Fatalln("Unsupported server certificate")
+			}
+			cert, err = x509.ParseCertificate(block.Bytes)
+			if err != nil {
+				log.Fatalln("Failed to parse server certificate:", err)
+			}
+		}
+		if cert == nil {
+			log.Fatalln("No certificate in server certificate file")
+		}
+		// Fake validity
+		cert.KeyUsage |= x509.KeyUsageCertSign
+		cert.IsCA = true
 	}
 	if len(csrfFile) > 0 {
 		fd, err := os.Open(csrfFile)
@@ -508,8 +549,15 @@ func performRequest(r *http.Request) (*http.Response, error) {
 	if request == nil {
 		return nil, err
 	}
+	var tlsCfg tls.Config
+	if cert != nil {
+		tlsCfg.RootCAs = x509.NewCertPool()
+		tlsCfg.RootCAs.AddCert(cert)
+		// Always use this certificate
+		tlsCfg.ServerName = cert.Subject.CommonName
+	}
 	tr := &http.Transport{
-		TLSClientConfig:       &tls.Config{InsecureSkipVerify: true},
+		TLSClientConfig:       &tlsCfg,
 		ResponseHeaderTimeout: requestTimeout,
 		DisableKeepAlives:     true,
 	}
@@ -1088,6 +1136,7 @@ func getSTConfig(dir string) (STConfig, error) {
 	}
 	// This is not in the XML, but we can determine a sane default
 	nc.Config.CsrfFile = filepath.Join(getSTDefaultConfDir(), "csrftokens.txt")
+	nc.Config.CertFile = filepath.Join(dir, "https-cert.pem")
 	return nc.Config, nil
 }
 

@@ -255,18 +255,18 @@ func init() {
 				continue
 			}
 			if cert != nil {
-				log.Fatalln("More than one certifcate in server certificate file")
+				log.Fatalln("More than one certificate in server certificate file")
 			}
 			if len(block.Headers) > 0 {
-				log.Fatalln("Unsupported server certifcate")
+				log.Fatalln("Unsupported server certificate")
 			}
 			cert, err = x509.ParseCertificate(block.Bytes)
 			if err != nil {
-				log.Fatalln("Failed to parse server certifcate:", err)
+				log.Fatalln("Failed to parse server certificate:", err)
 			}
 		}
 		if cert == nil {
-			log.Fatalln("No certificate in server certifcate file")
+			log.Fatalln("No certificate in server certificate file")
 		}
 		// Fake validity
 		cert.KeyUsage |= x509.KeyUsageCertSign

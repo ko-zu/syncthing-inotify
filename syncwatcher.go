@@ -1135,7 +1135,7 @@ func getSTConfig(dir string) (STConfig, error) {
 		return nc.Config, err
 	}
 	// This is not in the XML, but we can determine a sane default
-	nc.Config.CsrfFile = filepath.Join(getSTDefaultConfDir(), "csrftokens.txt")
+	nc.Config.CsrfFile = filepath.Join(dir, "csrftokens.txt")
 	nc.Config.CertFile = filepath.Join(dir, "https-cert.pem")
 	return nc.Config, nil
 }

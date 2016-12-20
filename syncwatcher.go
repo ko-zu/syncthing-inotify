@@ -613,8 +613,10 @@ func informError(msg string) error {
 func informChange(folder string, subs []string) error {
 	data := url.Values{}
 	data.Set("folder", folder)
-	for _, sub := range subs {
-		data.Add("sub", sub)
+	if len(subs) != 1 || subs[0] != "" {
+		for _, sub := range subs {
+			data.Add("sub", sub)
+		}
 	}
 	if delayScan > 0 {
 		data.Set("next", strconv.Itoa(delayScan))

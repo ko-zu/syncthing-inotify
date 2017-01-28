@@ -1,0 +1,66 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/cenkalti/backoff",
+			"repository": "https://github.com/cenkalti/backoff",
+			"vcs": "git",
+			"revision": "b02f2bbce11d7ea6b97f282ef1771b0fe2f65ef3",
+			"branch": "master",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/syncthing/syncthing/lib/ignore",
+			"repository": "https://github.com/syncthing/syncthing",
+			"vcs": "git",
+			"revision": "35e87e23fda4b696f6f5eed82483e0e0ea4bebfe",
+			"branch": "master",
+			"path": "/lib/ignore",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/syncthing/syncthing/lib/logger",
+			"repository": "https://github.com/syncthing/syncthing",
+			"vcs": "git",
+			"revision": "35e87e23fda4b696f6f5eed82483e0e0ea4bebfe",
+			"branch": "master",
+			"path": "lib/logger",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/syncthing/syncthing/lib/sync",
+			"repository": "https://github.com/syncthing/syncthing",
+			"vcs": "git",
+			"revision": "35e87e23fda4b696f6f5eed82483e0e0ea4bebfe",
+			"branch": "master",
+			"path": "lib/sync",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/syncthing/syncthing/vendor/github.com/gobwas/glob",
+			"repository": "https://github.com/syncthing/syncthing",
+			"vcs": "git",
+			"revision": "35e87e23fda4b696f6f5eed82483e0e0ea4bebfe",
+			"branch": "master",
+			"path": "vendor/github.com/gobwas/glob",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/syncthing/syncthing/vendor/github.com/sasha-s/go-deadlock",
+			"repository": "https://github.com/syncthing/syncthing",
+			"vcs": "git",
+			"revision": "35e87e23fda4b696f6f5eed82483e0e0ea4bebfe",
+			"branch": "master",
+			"path": "vendor/github.com/sasha-s/go-deadlock",
+			"notests": true
+		},
+		{
+			"importpath": "github.com/zillode/notify",
+			"repository": "https://github.com/zillode/notify",
+			"vcs": "git",
+			"revision": "df33c1a773b462f936a149c36696c018c047eaa9",
+			"branch": "master",
+			"notests": true
+		}
+	]
+}

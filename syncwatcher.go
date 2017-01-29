@@ -310,9 +310,6 @@ func main() {
 
 	allFolders := getFolders()
 	folders := filterFolders(allFolders)
-	if len(folders) == 0 {
-		log.Fatalln("No folders to be watched, exiting...")
-	}
 	stChans := make(map[string]chan STEvent, len(folders))
 	for _, folder := range folders {
 		Debug.Println("Installing watch for " + folder.Label)

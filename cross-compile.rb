@@ -40,7 +40,7 @@ end
       end
       ldflags = "-w -X main.Version=#{version}"
       if os.include?("darwin")
-        build = "xgo -go 1.7.1 --targets=darwin/amd64 -ldflags '#{ldflags}' ."
+        build = "xgo -go latest --targets=darwin/amd64 -ldflags '#{ldflags}' github.com/syncthing/syncthing-inotify"
         build += " && mv syncthing-inotify-darwin-10.6-amd64 #{name}"
       else
         build = "#{vars} go build -ldflags '#{ldflags}'"

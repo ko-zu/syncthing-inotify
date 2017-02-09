@@ -933,7 +933,7 @@ func watchSTEvents(stChans map[string]chan STEvent, folders []FolderConfiguratio
 			time.Sleep(configSyncTimeout)
 			continue
 		}
-		if events == nil {
+		if len(events) == 0 {
 			continue
 		}
 		for _, event := range events {

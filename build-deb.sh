@@ -42,7 +42,7 @@ debianDir() { # arch
 
 # For each supported architecture (in Debian format), compile and pack into
 # .deb archive.
-for arch in amd64 i386 armhf armel ; do
+for arch in amd64 i386 arm64 armhf armel ; do
 	debianDir "$arch"
 	build linux "$arch"
 	dpkg-deb -b deb .

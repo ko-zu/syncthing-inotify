@@ -114,7 +114,7 @@ var (
 var (
 	debounceTimeout   = 500 * time.Millisecond
 	configSyncTimeout = 5 * time.Second
-	fsEventTimeout    = 5 * time.Second
+	fsEventTimeout    = 500 * time.Millisecond
 	dirVsFiles        = 128
 	maxFiles          = 512
 )
@@ -686,6 +686,9 @@ func accumulateChanges(debounceTimeout time.Duration,
 	for {
 		if flushTimerNeedsReset {
 			flushTimerNeedsReset = false
+			if !flushTimer.Stop() {
+				<-flushTimer.C
+			}
 			flushTimer.Reset(currInterval)
 		}
 		select {
@@ -721,13 +724,6 @@ func accumulateChanges(debounceTimeout time.Duration,
 			} else {
 				Debug.Println("[FS] Incoming Changes for " + folder)
 			}
-			p, ok := inProgress[item]
-			if ok && !p.fsEvent {
-				// Change originated from ST
-				delete(inProgress, item)
-				Debug.Println("[FS] Removed tracking for " + item)
-				continue
-			}
 			if len(inProgress) > maxFiles {
 				Debug.Println("[FS] Tracking too many files, aggregating FSEvent: " + item)
 				continue
@@ -758,7 +754,7 @@ func accumulateChanges(debounceTimeout time.Duration,
 						delete(inProgress, path)
 						continue
 					}
-					if progress.fsEvent && time.Now().Sub(progress.time) > currInterval {
+					if progress.fsEvent && time.Now().Sub(progress.time) > fsEventTimeout {
 						paths = append(paths, path)
 						Debug.Println("Informing about " + path)
 					} else {

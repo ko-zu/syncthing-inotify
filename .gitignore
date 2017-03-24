@@ -2,6 +2,5 @@
 /syncthing-inotify*
 /Godeps/_workspace
 /Godeps/Readme
-/vendor
 deb
 *.deb

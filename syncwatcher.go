@@ -254,15 +254,15 @@ func init() {
 			if block.Type != "CERTIFICATE" {
 				continue
 			}
-			if cert != nil {
-				log.Fatalln("More than one certificate in server certificate file")
-			}
 			if len(block.Headers) > 0 {
 				log.Fatalln("Unsupported server certificate")
 			}
 			cert, err = x509.ParseCertificate(block.Bytes)
 			if err != nil {
 				log.Fatalln("Failed to parse server certificate:", err)
+			}
+			if cert != nil {
+				break;
 			}
 		}
 		if cert == nil {

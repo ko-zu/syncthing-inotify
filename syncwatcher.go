@@ -154,6 +154,21 @@ above). The value 0 is used to disable all of the above. The default is to
 show time only (2).`
 )
 
+func setupLogging(verbosity int, logflags int) {
+	if verbosity >= 1 {
+		Warning = log.New(logFd, "[WARNING] ", logflags)
+	}
+	if verbosity >= 2 {
+		OK = log.New(logFd, "[OK] ", logflags)
+	}
+	if verbosity >= 3 {
+		Trace = log.New(logFd, "[TRACE] ", logflags)
+	}
+	if verbosity >= 4 {
+		Debug = log.New(logFd, "[DEBUG] ", logflags)
+	}
+}
+
 func init() {
 	c, _ := getSTConfig(getSTDefaultConfDir())
 	if !strings.Contains(c.Target, "://") {
@@ -207,18 +222,7 @@ func init() {
 		}
 	}
 
-	if verbosity >= 1 {
-		Warning = log.New(logFd, "[WARNING] ", logflags)
-	}
-	if verbosity >= 2 {
-		OK = log.New(logFd, "[OK] ", logflags)
-	}
-	if verbosity >= 3 {
-		Trace = log.New(logFd, "[TRACE] ", logflags)
-	}
-	if verbosity >= 4 {
-		Debug = log.New(logFd, "[DEBUG] ", logflags)
-	}
+	setupLogging(verbosity, logflags);
 
 	if len(home) > 0 {
 		c, err := getSTConfig(home)
@@ -691,8 +695,10 @@ func accumulateChanges(debounceTimeout time.Duration,
 				if currInterval != debounceTimeout {
 					currInterval = debounceTimeout
 					flushTimerNeedsReset = true
+					Debug.Println("[ST] Incoming Changes for " + folder + ", speeding up inotify timeout parameters to", debounceTimeout)
+				} else {
+					Debug.Println("[ST] Incoming Changes for " + folder)
 				}
-				Debug.Println("[ST] Incoming Changes for " + folder + ", speeding up inotify timeout parameters")
 				continue
 			}
 			if item.Finished {
@@ -711,8 +717,10 @@ func accumulateChanges(debounceTimeout time.Duration,
 			if currInterval != debounceTimeout {
 				currInterval = debounceTimeout
 				flushTimerNeedsReset = true
+				Debug.Println("[FS] Incoming Changes for " + folder + ", speeding up inotify timeout parameters to", debounceTimeout)
+			} else {
+				Debug.Println("[FS] Incoming Changes for " + folder)
 			}
-			Debug.Println("[FS] Incoming Changes for " + folder + ", speeding up inotify timeout parameters")
 			p, ok := inProgress[item]
 			if ok && !p.fsEvent {
 				// Change originated from ST

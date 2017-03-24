@@ -15,6 +15,10 @@ var (
 	testDirectory = "test" + slash
 )
 
+func init() {
+	// setupLogging(4, 2); // For debugging
+}
+
 func clearTestDir() {
 	os.RemoveAll(testDirectory)
 }

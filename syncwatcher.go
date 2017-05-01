@@ -123,8 +123,6 @@ var (
 var (
 	stop             = make(chan int)
 	versionFolder    = ".stversions"
-	tempFilePrefixes = []string{".syncthing.", "~syncthing~"}
-	tempFileSuffix   = ".tmp"
 	logFd            = os.Stdout
 	Version          = "unknown-dev"
 	Discard          = log.New(ioutil.Discard, "", log.Ldate)
@@ -486,10 +484,13 @@ func relativePath(path string, folderPath string) string {
 	path = expandTilde(path)
 	path = strings.TrimPrefix(path, folderPath)
 	if len(path) == 0 {
-		return path
+		return "."
 	}
 	if os.IsPathSeparator(path[0]) {
-		path = path[1:len(path)]
+		if len(path) == 1 {
+			return "."
+		}
+		return path[1:len(path)]
 	}
 	return path
 }
@@ -501,18 +502,7 @@ func relativePath(path string, folderPath string) string {
 func createIgnoreFilter(folderPath string) func(relPath string) bool {
 	ignores := ignore.New(false)
 	ignores.Load(filepath.Join(folderPath, ".stignore"))
-	return func(relPath string) bool {
-		if strings.SplitN(relPath, pathSeparator, 2)[0] == versionFolder {
-			return true
-		}
-		for _, ignorePrefix := range tempFilePrefixes {
-			if strings.HasPrefix(filepath.Base(relPath), ignorePrefix) &&
-				strings.HasSuffix(relPath, tempFileSuffix) {
-				return true
-			}
-		}
-		return ignores.Match(relPath).IsIgnored()
-	}
+	return ignores.ShouldIgnore
 }
 
 // waitForEvent waits for an event in a channel c and returns event.Path().

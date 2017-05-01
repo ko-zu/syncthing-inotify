@@ -13,7 +13,7 @@
 			"importpath": "github.com/syncthing/syncthing/lib/ignore",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "35e87e23fda4b696f6f5eed82483e0e0ea4bebfe",
+			"revision": "0b854dff9d23159f399da1e77d360b3d9be0c938",
 			"branch": "master",
 			"path": "/lib/ignore",
 			"notests": true

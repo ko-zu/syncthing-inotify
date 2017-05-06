@@ -677,7 +677,10 @@ func accumulateChanges(debounceTimeout time.Duration,
 		if flushTimerNeedsReset {
 			flushTimerNeedsReset = false
 			if !flushTimer.Stop() {
-				<-flushTimer.C
+				select {
+				case <-flushTimer.C:
+				default:
+				}
 			}
 			flushTimer.Reset(currInterval)
 		}

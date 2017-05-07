@@ -714,6 +714,13 @@ func accumulateChanges(debounceTimeout time.Duration,
 			} else {
 				Debug.Println("[FS] Incoming Changes for " + folder)
 			}
+			p, ok := inProgress[item]
+			if ok && !p.fsEvent {
+				// Change originated from ST
+				delete(inProgress, item)
+				Debug.Println("[FS] Removed tracking for " + item)
+				continue
+			}
 			if len(inProgress) > maxFiles {
 				Debug.Println("[FS] Tracking too many files, aggregating FSEvent: " + item)
 				continue

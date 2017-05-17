@@ -121,18 +121,18 @@ var (
 
 // Main
 var (
-	stop             = make(chan int)
-	versionFolder    = ".stversions"
-	logFd            = os.Stdout
-	Version          = "unknown-dev"
-	Discard          = log.New(ioutil.Discard, "", log.Ldate)
-	Warning          = Discard // verbosity=1
-	OK               = Discard // 2
-	Trace            = Discard // 3
-	Debug            = Discard // 4
-	watchFolders     folderSlice
-	skipFolders      folderSlice
-	delayScan        = 3600
+	stop          = make(chan int)
+	versionFolder = ".stversions"
+	logFd         = os.Stdout
+	Version       = "unknown-dev"
+	Discard       = log.New(ioutil.Discard, "", log.Ldate)
+	Warning       = Discard // verbosity=1
+	OK            = Discard // 2
+	Trace         = Discard // 3
+	Debug         = Discard // 4
+	watchFolders  folderSlice
+	skipFolders   folderSlice
+	delayScan     = 3600
 )
 
 const (
@@ -220,7 +220,7 @@ func init() {
 		}
 	}
 
-	setupLogging(verbosity, logflags);
+	setupLogging(verbosity, logflags)
 
 	if len(home) > 0 {
 		c, err := getSTConfig(home)
@@ -264,7 +264,7 @@ func init() {
 				log.Fatalln("Failed to parse server certificate:", err)
 			}
 			if cert != nil {
-				break;
+				break
 			}
 		}
 		if cert == nil {
@@ -677,7 +677,10 @@ func accumulateChanges(debounceTimeout time.Duration,
 		if flushTimerNeedsReset {
 			flushTimerNeedsReset = false
 			if !flushTimer.Stop() {
-				<-flushTimer.C
+				select {
+				case <-flushTimer.C:
+				default:
+				}
 			}
 			flushTimer.Reset(currInterval)
 		}
@@ -688,7 +691,7 @@ func accumulateChanges(debounceTimeout time.Duration,
 				if currInterval != debounceTimeout {
 					currInterval = debounceTimeout
 					flushTimerNeedsReset = true
-					Debug.Println("[ST] Incoming Changes for " + folder + ", speeding up inotify timeout parameters to", debounceTimeout)
+					Debug.Println("[ST] Incoming Changes for "+folder+", speeding up inotify timeout parameters to", debounceTimeout)
 				} else {
 					Debug.Println("[ST] Incoming Changes for " + folder)
 				}
@@ -710,7 +713,7 @@ func accumulateChanges(debounceTimeout time.Duration,
 			if currInterval != debounceTimeout {
 				currInterval = debounceTimeout
 				flushTimerNeedsReset = true
-				Debug.Println("[FS] Incoming Changes for " + folder + ", speeding up inotify timeout parameters to", debounceTimeout)
+				Debug.Println("[FS] Incoming Changes for "+folder+", speeding up inotify timeout parameters to", debounceTimeout)
 			} else {
 				Debug.Println("[FS] Incoming Changes for " + folder)
 			}

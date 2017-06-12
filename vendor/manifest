@@ -58,7 +58,7 @@
 			"importpath": "github.com/zillode/notify",
 			"repository": "https://github.com/zillode/notify",
 			"vcs": "git",
-			"revision": "df33c1a773b462f936a149c36696c018c047eaa9",
+			"revision": "d1bed6cba07938d6ca422fa88e3526f6a31ed996",
 			"branch": "master",
 			"notests": true
 		}

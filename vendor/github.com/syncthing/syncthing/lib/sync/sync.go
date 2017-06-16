@@ -2,7 +2,7 @@
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
-// You can obtain one at http://mozilla.org/MPL/2.0/.
+// You can obtain one at https://mozilla.org/MPL/2.0/.
 
 package sync
 
@@ -18,6 +18,12 @@ import (
 
 	"github.com/sasha-s/go-deadlock"
 )
+
+type clock interface {
+	Now() time.Time
+}
+
+var defaultClock clock = (*standardClock)(nil)
 
 type Mutex interface {
 	Lock()
@@ -80,7 +86,7 @@ func (h holder) String() string {
 	if h.at == "" {
 		return "not held"
 	}
-	return fmt.Sprintf("at %s goid: %d for %s", h.at, h.goid, time.Since(h.time))
+	return fmt.Sprintf("at %s goid: %d for %s", h.at, h.goid, defaultClock.Now().Sub(h.time))
 }
 
 type loggedMutex struct {
@@ -95,7 +101,7 @@ func (m *loggedMutex) Lock() {
 
 func (m *loggedMutex) Unlock() {
 	currentHolder := m.holder.Load().(holder)
-	duration := time.Since(currentHolder.time)
+	duration := defaultClock.Now().Sub(currentHolder.time)
 	if duration >= threshold {
 		l.Debugf("Mutex held for %v. Locked at %s unlocked at %s", duration, currentHolder.at, getHolder().at)
 	}
@@ -119,11 +125,11 @@ type loggedRWMutex struct {
 }
 
 func (m *loggedRWMutex) Lock() {
-	start := time.Now()
+	start := defaultClock.Now()
 
 	atomic.StoreInt32(&m.logUnlockers, 1)
 	m.RWMutex.Lock()
-	m.logUnlockers = 0
+	atomic.StoreInt32(&m.logUnlockers, 0)
 
 	holder := getHolder()
 	m.holder.Store(holder)
@@ -147,7 +153,7 @@ func (m *loggedRWMutex) Lock() {
 
 func (m *loggedRWMutex) Unlock() {
 	currentHolder := m.holder.Load().(holder)
-	duration := time.Since(currentHolder.time)
+	duration := defaultClock.Now().Sub(currentHolder.time)
 	if duration >= threshold {
 		l.Debugf("RWMutex held for %v. Locked at %s unlocked at %s", duration, currentHolder.at, getHolder().at)
 	}
@@ -199,9 +205,9 @@ type loggedWaitGroup struct {
 }
 
 func (wg *loggedWaitGroup) Wait() {
-	start := time.Now()
+	start := defaultClock.Now()
 	wg.WaitGroup.Wait()
-	duration := time.Since(start)
+	duration := defaultClock.Now().Sub(start)
 	if duration >= threshold {
 		l.Debugf("WaitGroup took %v at %s", duration, getHolder())
 	}
@@ -213,7 +219,7 @@ func getHolder() holder {
 	return holder{
 		at:   fmt.Sprintf("%s:%d", file, line),
 		goid: goid(),
-		time: time.Now(),
+		time: defaultClock.Now(),
 	}
 }
 
@@ -226,4 +232,77 @@ func goid() int {
 		return -1
 	}
 	return id
+}
+
+// TimeoutCond is a variant on Cond. It has roughly the same semantics regarding 'L' - it must be held
+// both when broadcasting and when calling TimeoutCondWaiter.Wait()
+// Call Broadcast() to broadcast to all waiters on the TimeoutCond. Call SetupWait to create a
+// TimeoutCondWaiter configured with the given timeout, which can then be used to listen for
+// broadcasts.
+type TimeoutCond struct {
+	L  sync.Locker
+	ch chan struct{}
+}
+
+// TimeoutCondWaiter is a type allowing a consumer to wait on a TimeoutCond with a timeout. Wait() may be called multiple times,
+// and will return true every time that the TimeoutCond is broadcast to. Once the configured timeout
+// expires, Wait() will return false.
+// Call Stop() to release resources once this TimeoutCondWaiter is no longer needed.
+type TimeoutCondWaiter struct {
+	c     *TimeoutCond
+	timer *time.Timer
+}
+
+func NewTimeoutCond(l sync.Locker) *TimeoutCond {
+	return &TimeoutCond{
+		L: l,
+	}
+}
+
+func (c *TimeoutCond) Broadcast() {
+	// ch.L must be locked when calling this function
+
+	if c.ch != nil {
+		close(c.ch)
+		c.ch = nil
+	}
+}
+
+func (c *TimeoutCond) SetupWait(timeout time.Duration) *TimeoutCondWaiter {
+	timer := time.NewTimer(timeout)
+
+	return &TimeoutCondWaiter{
+		c:     c,
+		timer: timer,
+	}
+}
+
+func (w *TimeoutCondWaiter) Wait() bool {
+	// ch.L must be locked when calling this function
+
+	// Ensure that the channel exists, since we're going to be waiting on it
+	if w.c.ch == nil {
+		w.c.ch = make(chan struct{})
+	}
+	ch := w.c.ch
+
+	w.c.L.Unlock()
+	defer w.c.L.Lock()
+
+	select {
+	case <-w.timer.C:
+		return false
+	case <-ch:
+		return true
+	}
+}
+
+func (w *TimeoutCondWaiter) Stop() {
+	w.timer.Stop()
+}
+
+type standardClock struct{}
+
+func (*standardClock) Now() time.Time {
+	return time.Now()
 }

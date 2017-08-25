@@ -114,7 +114,6 @@ var (
 var (
 	debounceTimeout   = 500 * time.Millisecond
 	configSyncTimeout = 5 * time.Second
-	fsEventTimeout    = 500 * time.Millisecond
 	dirVsFiles        = 128
 	maxFiles          = 512
 )
@@ -755,7 +754,7 @@ func accumulateChanges(debounceTimeout time.Duration,
 						delete(inProgress, path)
 						continue
 					}
-					if progress.fsEvent && time.Now().Sub(progress.time) > fsEventTimeout {
+					if progress.fsEvent && time.Now().Sub(progress.time) > debounceTimeout {
 						paths = append(paths, path)
 						Debug.Println("Informing about " + path)
 					} else {

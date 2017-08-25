@@ -13,7 +13,7 @@
 			"importpath": "github.com/syncthing/syncthing/lib/dialer",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "lib/dialer",
 			"notests": true
@@ -22,7 +22,7 @@
 			"importpath": "github.com/syncthing/syncthing/lib/ignore",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "/lib/ignore",
 			"notests": true
@@ -31,7 +31,7 @@
 			"importpath": "github.com/syncthing/syncthing/lib/logger",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "lib/logger",
 			"notests": true
@@ -40,7 +40,7 @@
 			"importpath": "github.com/syncthing/syncthing/lib/osutil",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "lib/osutil",
 			"notests": true
@@ -49,7 +49,7 @@
 			"importpath": "github.com/syncthing/syncthing/lib/sync",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "lib/sync",
 			"notests": true
@@ -58,7 +58,7 @@
 			"importpath": "github.com/syncthing/syncthing/vendor/github.com/calmh/du",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "vendor/github.com/calmh/du",
 			"notests": true
@@ -67,7 +67,7 @@
 			"importpath": "github.com/syncthing/syncthing/vendor/github.com/gobwas/glob",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "vendor/github.com/gobwas/glob",
 			"notests": true
@@ -76,7 +76,7 @@
 			"importpath": "github.com/syncthing/syncthing/vendor/github.com/petermattis/goid",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "vendor/github.com/petermattis/goid",
 			"notests": true
@@ -85,7 +85,7 @@
 			"importpath": "github.com/syncthing/syncthing/vendor/github.com/sasha-s/go-deadlock",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "vendor/github.com/sasha-s/go-deadlock",
 			"notests": true
@@ -94,7 +94,7 @@
 			"importpath": "github.com/syncthing/syncthing/vendor/golang.org/x/net/bpf",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "vendor/golang.org/x/net/bpf",
 			"notests": true
@@ -103,7 +103,7 @@
 			"importpath": "github.com/syncthing/syncthing/vendor/golang.org/x/net/internal/iana",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "vendor/golang.org/x/net/internal/iana",
 			"notests": true
@@ -112,7 +112,7 @@
 			"importpath": "github.com/syncthing/syncthing/vendor/golang.org/x/net/internal/netreflect",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "vendor/golang.org/x/net/internal/netreflect",
 			"notests": true
@@ -121,7 +121,7 @@
 			"importpath": "github.com/syncthing/syncthing/vendor/golang.org/x/net/ipv4",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "vendor/golang.org/x/net/ipv4",
 			"notests": true
@@ -130,7 +130,7 @@
 			"importpath": "github.com/syncthing/syncthing/vendor/golang.org/x/net/ipv6",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "vendor/golang.org/x/net/ipv6",
 			"notests": true
@@ -139,7 +139,7 @@
 			"importpath": "github.com/syncthing/syncthing/vendor/golang.org/x/net/proxy",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "vendor/golang.org/x/net/proxy",
 			"notests": true
@@ -148,7 +148,7 @@
 			"importpath": "github.com/syncthing/syncthing/vendor/golang.org/x/text/internal/gen",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "vendor/golang.org/x/text/internal/gen",
 			"notests": true
@@ -157,7 +157,7 @@
 			"importpath": "github.com/syncthing/syncthing/vendor/golang.org/x/text/internal/triegen",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "vendor/golang.org/x/text/internal/triegen",
 			"notests": true
@@ -166,7 +166,7 @@
 			"importpath": "github.com/syncthing/syncthing/vendor/golang.org/x/text/internal/ucd",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "vendor/golang.org/x/text/internal/ucd",
 			"notests": true
@@ -175,7 +175,7 @@
 			"importpath": "github.com/syncthing/syncthing/vendor/golang.org/x/text/transform",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "vendor/golang.org/x/text/transform",
 			"notests": true
@@ -184,7 +184,7 @@
 			"importpath": "github.com/syncthing/syncthing/vendor/golang.org/x/text/unicode/cldr",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "vendor/golang.org/x/text/unicode/cldr",
 			"notests": true
@@ -193,7 +193,7 @@
 			"importpath": "github.com/syncthing/syncthing/vendor/golang.org/x/text/unicode/norm",
 			"repository": "https://github.com/syncthing/syncthing",
 			"vcs": "git",
-			"revision": "803da92ca93c44439eaae8faf0afbbfb4d60928b",
+			"revision": "d475ad7ce1c994358888c2fed250427ed0ef0243",
 			"branch": "HEAD",
 			"path": "vendor/golang.org/x/text/unicode/norm",
 			"notests": true

@@ -500,7 +500,7 @@ func relativePath(path string, folderPath string) string {
 // ".stignore" file. The returned function expects the path of the file to be
 // tested relative to its folders root.
 func createIgnoreFilter(folderPath string) func(relPath string) bool {
-	ignores := ignore.New(false)
+	ignores := ignore.New(ignore.WithCache(false))
 	ignores.Load(filepath.Join(folderPath, ".stignore"))
 	return ignores.ShouldIgnore
 }

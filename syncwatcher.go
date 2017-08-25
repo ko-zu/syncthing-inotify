@@ -490,7 +490,7 @@ func relativePath(path string, folderPath string) string {
 		if len(path) == 1 {
 			return "."
 		}
-		return path[1:len(path)]
+		return path[1:]
 	}
 	return path
 }

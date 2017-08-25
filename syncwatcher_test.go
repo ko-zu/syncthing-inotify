@@ -594,14 +594,14 @@ func TestAggregateChanges(t *testing.T) {
 	checkAggregation(3, nil, nil)
 	checkAggregation(3, []string{}, nil)
 	checkAggregation(3, []string{"file1"}, []string{"file1"})
-	checkAggregation(3, []string{"a"+slash+"file1"}, []string{"a"+slash+"file1"})
-	checkAggregation(3, []string{"a"+slash+"file1", "a"+slash+"file2", "a"+slash+"file3",
-		"b"+slash+"file1", "b"+slash+"file2"}, []string{"a", "b"+slash+"file1", "b"+slash+"file2"})
-	checkAggregation(3, []string{"a"+slash+"deleted1", "a"+slash+"deleted2", "a"+slash+"deleted3", "a"+slash+"deleted4",
-		"b"+slash+"deleted1", "b"+slash+"deleted2"}, []string{"a"+slash+"deleted1", "a"+slash+"deleted2", "a"+slash+"deleted3",
-		"a"+slash+"deleted4", "b"+slash+"deleted1", "b"+slash+"deleted2"})
+	checkAggregation(3, []string{"a" + slash + "file1"}, []string{"a" + slash + "file1"})
+	checkAggregation(3, []string{"a" + slash + "file1", "a" + slash + "file2", "a" + slash + "file3",
+		"b" + slash + "file1", "b" + slash + "file2"}, []string{"a", "b" + slash + "file1", "b" + slash + "file2"})
+	checkAggregation(3, []string{"a" + slash + "deleted1", "a" + slash + "deleted2", "a" + slash + "deleted3", "a" + slash + "deleted4",
+		"b" + slash + "deleted1", "b" + slash + "deleted2"}, []string{"a" + slash + "deleted1", "a" + slash + "deleted2", "a" + slash + "deleted3",
+		"a" + slash + "deleted4", "b" + slash + "deleted1", "b" + slash + "deleted2"})
 	checkAggregation(3, []string{"file1", "file2"}, []string{"file1", "file2"})
 	checkAggregation(3, []string{"file1", "file2", "file3", "file4"}, []string{""})
 	checkAggregation(3, []string{"file1", "file2", "file3", "file4",
-		"a"+slash+"file1", "a"+slash+"file2"}, []string{""})
+		"a" + slash + "file1", "a" + slash + "file2"}, []string{""})
 }

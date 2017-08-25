@@ -431,10 +431,11 @@ func TestFilesAggregation(t *testing.T) {
 		stop <- 1
 		return nil
 	}
+	go accumulateChanges(testDebounceTimeout, testRepo, testDirectory, testDirVsFiles, stChan, fsChan, fileChange)
+	time.Sleep(testDebounceTimeout / 10)
 	for _, testFile := range testFiles {
 		fsChan <- testDirectory + testFile
 	}
-	go accumulateChanges(testDebounceTimeout, testRepo, testDirectory, testDirVsFiles, stChan, fsChan, fileChange)
 	<-stop
 	time.Sleep(testDebounceTimeout * 2)
 	if !testOK {
@@ -507,10 +508,11 @@ func TestDeletesAggregation(t *testing.T) {
 		stop <- 1
 		return nil
 	}
+	go accumulateChanges(testDebounceTimeout, testRepo, testDirectory, testDirVsFiles, stChan, fsChan, fileChange)
+	time.Sleep(testDebounceTimeout / 10)
 	for _, testFile := range testFiles {
 		fsChan <- testDirectory + testFile
 	}
-	go accumulateChanges(testDebounceTimeout, testRepo, testDirectory, testDirVsFiles, stChan, fsChan, fileChange)
 	<-stop
 	time.Sleep(testDebounceTimeout * 2)
 	if !testOK {

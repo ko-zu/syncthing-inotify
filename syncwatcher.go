@@ -164,6 +164,7 @@ func setupLogging(verbosity int, logflags int) {
 	}
 	if verbosity >= 4 {
 		Debug = log.New(logFd, "[DEBUG] ", logflags)
+		Debug.SetFlags(Debug.Flags() | log.Lmicroseconds)
 	}
 }
 
@@ -666,7 +667,7 @@ func accumulateChanges(debounceTimeout time.Duration,
 		Debug.Println("Delay scan reminders are disabled")
 	}
 	inProgress := make(map[string]progressTime) // [path string]{fs, start}
-	currInterval := delayScanInterval           // Timeout of the timer
+	currInterval := debounceTimeout             // Timeout of the timer
 	if delayScan > 0 {
 		askToDelayScan(folder, callback)
 	}
